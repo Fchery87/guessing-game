@@ -5,64 +5,71 @@
 // Use window object methods to gather input from the user and display information to the user.
 // Use DOM manipulation to give a visual indication of the game's progress in some way.
 
-// const targetNumber = Math.floor(Math.random() * 10) + 1;
-// let guesses = 0;
+// Initialize variables
+let answer = Math.floor(Math.random() * 10) + 1; // Generate a random number between 1 and 10
+let guesses = 0;
+const maxGuesses = 5;
 
-// function playGame() {
-//   const userGuess = parseInt(window.prompt('Guess a number between 1 and 10:'));
-//   guesses++;
-//   document.getElementById('guesses').textContent = guesses;
+// Function to handle user input and game logic
+function guessNumber() {
+  const userInput = document.getElementById("userInput").value;
+  const userGuess = parseInt(userInput);
 
-//   if (userGuess === targetNumber) {
-//     alert(`Yea Boy! You guessed the number ${targetNumber} correctly in ${guesses} guesses.`);
-//   } else if (userGuess < targetNumber) {
-//     alert('Too low Suckka. Try again.');
-//     playGame();
-//   } else {
-//     alert('Too high, Stop Cutting Grass. Try again.');
-//     playGame();
-//   }
-// }
+  if (isNaN(userGuess) || userGuess < 1 || userGuess > 10) {
+    alert("Please enter a valid number between 1 and 10.");
+    return;
+  }
 
-const maxGuesses = 10;
-    let remainingGuesses = maxGuesses;
-    const targetNumber = Math.floor(Math.random() * 10) + 1;
-    let guesses = 0;
+  guesses++;
 
-    function updateGuesses() {
-      document.getElementById('guesses').textContent = guesses;
-    }
+  if (userGuess === answer) {
+    document.getElementById("result").textContent = `🎉 Bravo! You cracked the secret code ${answer} in just ${guesses} attempts. Looks like your guessing skills are sharper than a porcupine's quills in a balloon factory! 🎈`;
+    resetGame();
+  } else if (userGuess < answer) {
+    document.getElementById("result").textContent = "Whoopsie-doodle! That's lower than a limbo master's morning stretch! Give it another whirl! 🚀";
+  } else {
+    document.getElementById("result").textContent = "Whoa there, high roller! That's higher than a giraffe on stilts! Give it another shot! 🦒";
+  }
 
-    function updateRemaining() {
-      document.getElementById('remaining').innerHTML = remainingGuesses;
-    }
+  if (guesses < maxGuesses && userGuess !== answer) {
+    const remainingGuesses = maxGuesses - guesses;
+    document.getElementById("remaining").textContent = `Guesses remaining: ${remainingGuesses}`;
+  } else if (guesses === maxGuesses && userGuess !== answer) {
+    document.getElementById("result").textContent = `Oops! You've hit the guessing ceiling. The sneaky number was ${answer}. Better luck next time! 🤷‍♂️`;
+    resetGame();
+  }
+}
 
-    function playGame() {
-      const userGuess = parseInt(window.prompt('Guess a number between 1 and 10:'));
-      guesses++;
-      updateGuesses();
+// Function to reset the game
+function resetGame() {
+  guesses = 0;
+  answer = Math.floor(Math.random() * 10) + 1;
+  document.getElementById("userInput").value = ""; // Clear input box
+  document.getElementById("remaining").textContent = ""; // Clear remaining guess message
+}
 
-      if (userGuess === targetNumber) {
-        alert(`Yeah, boy! You guessed the number ${targetNumber} correctly in ${guesses} guesses.`);
-      } else if (userGuess < targetNumber) {
-        alert('Too low, sucka! Try again.');
-      } else {
-        alert('Too high, Stop Cutting Grass. Try again.');
-      }
+// Initialize game
+document.addEventListener("DOMContentLoaded", function () {
+  const header = document.createElement("h1");
+  header.textContent = "Dare to Guess: The Ultimate Challenge";
+  document.getElementById("app").appendChild(header);
 
-      remainingGuesses--;
-      updateRemaining();
+  const inputBox = document.createElement("input");
+  inputBox.setAttribute("type", "number");
+  inputBox.setAttribute("id", "userInput");
+  inputBox.setAttribute("placeholder", "Enter your guess");
+  document.getElementById("app").appendChild(inputBox);
 
-      if (remainingGuesses > 0 && userGuess !== targetNumber) {
-        playGame();
-      } else {
-        if (remainingGuesses === 0) {
-          alert(`Sorry, you have used all your guesses. The number was ${targetNumber}.`);
-        }
-      }
-    }
+  const guessButton = document.createElement("button");
+  guessButton.textContent = "Guess";
+  guessButton.addEventListener("click", guessNumber);
+  document.getElementById("app").appendChild(guessButton);
 
-    updateRemaining();
-    playGame();
+  const resultDisplay = document.createElement("div");
+  resultDisplay.setAttribute("id", "result");
+  document.getElementById("app").appendChild(resultDisplay);
 
-
+  const remainingDisplay = document.createElement("div");
+  remainingDisplay.setAttribute("id", "remaining");
+  document.getElementById("app").appendChild(remainingDisplay);
+});
